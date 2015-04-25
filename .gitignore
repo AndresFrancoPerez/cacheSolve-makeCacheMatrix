@@ -1,13 +1,66 @@
-# History files
-.Rhistory
-.Rapp.history
+##This function its a little different compared with the given example in the class
+##because I did it myself with my own programing logic...
 
-# Example code in package build process
-*-Ex.R
+##makeCacheMatrix is a function to store on cache memory or to print the inverse
+## matrix of x if it was calculated before. In cacheSolve I try to determine if
+## x and its inverse is storaged or not.
 
-# RStudio files
-.Rproj.user/
+##makeCacheMatrix: I defined it as a function with a given matrix "x", assuming that
+## "x" is a squared invertible matrix. "m" is boolean variable with 2 possible outputs:
+## "m=TRUE" means that "x" and its inverse are storaged on cache memory and "x"
+##hasn't changed, and "m=FALSE" means we have to solve(x). FYI: I define "m"
+##on cacheSolve.
+##If m==FALSE then I display a message and storage in cache the given "x" matrix in the 
+##"xMatrix" variable, and its inverse in "xInv", calculated with the R function solve().
+##Finally I print "xInv".
+##If m!=FALSE (with if...ELSE) I display the second message and just print the 
+##"xInv" because "x" hasn't changed and "xInv" was already calculated and storaged.
+##READ BELOW TO SEE THE EXPLANATION FOR cacheSolve
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+makeCacheMatrix<- function(x=matrix()){ 
+  if(m==FALSE){
+    message("The matrix has changed or its inverse wasn´t on Cache!")
+    xMatrix<<-x
+    xInv<<-solve(x)
+    print(xInv)
+  }else{
+    message("Getting the inverse matrix from Cache memory!")
+    print(xInv)
+  }
+}
+
+##cacheSolve: Ok, this one was tricky!
+##I created it as a function depending on the given "x" Matrix.
+##I created a "v1" vector that calls the ls() R function: ls() will display all
+##the variables storaged in your environment and with the "=="xMatrix"" "v1" will 
+##compare all the variables with "xMatrix". For example if I run ls() and prints:
+## "a" "x" "xMatrix" "b" "m", then "v1" will be equal to (FALSE FALSE TRUE FALSE FALSE)
+## that's why I created "v2" because it just bring me TRUE if "xMatrix" is already
+## in cache memory or an empty vector if it isn't created yet! :)
+##So if I evaluate "v2"==TRUE, if its TRUE, "xMatrix" exists, and if its FALSE
+## "xMatrix" doesn't exists.
+##It's almost over, but i have to evaluate if "x" is still the same matrix i storaged
+##in "xMatrix" and that says if i can display "xInv" or if i have to calculate it
+## again, so I opened a new "if" block with the R function "Identical" to compare
+## "xMatrix" and "x". If its TRUE then "m<<-TRUE" because "xMatrix" and "xInv"
+##exist on cache and "x" is still the same I storaged. Offcourse if "xMatrix" doesn't
+##exists (therefore neither does "xInv"), or "x" is a different matrix now, "m==FALSE".
+##Finally I call "makeCacheMatrix(x)" so it decides, based on the value of "m" if
+##"xInv" can be display from cache memory or it has to be calculated! 
+
+cacheSolve<-function(x){
+  v1<-ls()=="xMatrix"
+  v2<-v1[v1==TRUE]
+  if(v2==TRUE){
+    if(identical(xMatrix,x)){
+      m<<-TRUE
+    }else{
+      m<<-FALSE
+    }
+  }else{
+    m<<-FALSE
+  }
+  makeCacheMatrix(x)
+}
+
+##Sorry for my english, I'm from Colombia!!
